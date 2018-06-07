@@ -1,5 +1,5 @@
 <div>
-    <div class="row">
+    <div class="row editor">
         <div class="col-md-8">
             <textarea id="code-screen">{{content}}</textarea>
         </div>
@@ -13,8 +13,8 @@
                         {{/if}}
                     </span>
                </div>
-               <div class="panel-body">
-                   <ul class="media-list" style="height:300px; overflow-y:scroll" id="chatbox-listMessages">
+               <div class="panel-body fixed-panel">
+                   <ul class="media-list" id="chatbox-listMessages">
 
                    </ul>
                </div>
@@ -63,12 +63,15 @@
     socket.on('doc', function(obj){
         init(obj.str, obj.revision, obj.clients, new SocketIOAdapter(socket));
     });
-
+    
     var userName = $("#chatbox-username").val();
     if(userName === "") {
-        var userId = Math.floor(Math.random() * 9999).toString();
-        userName = "User" + userId;
-        $("#chatbox-username").text(userName);
+        userName = $("#userName").text();
+        if(userName === "") {
+            var userId = Math.floor(Math.random() * 9999).toString();
+            userName = "User" + userId;
+            $("#chatbox-username").text(userName);
+        }
     };
 
     var roomId = $("#roomId").val(); 

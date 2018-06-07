@@ -11,3 +11,11 @@ a {
   padding: 15px;
   margin: 0 auto;
 }
+.editor {
+  padding: 1em;
+}
+.fixed-panel {
+  min-height: 50px;
+  max-height: 205px;
+  overflow-y: scroll;
+}
