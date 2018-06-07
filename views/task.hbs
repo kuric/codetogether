@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-md-8">
-            <textarea id="code-screen"></textarea>
+            <textarea id="code-screen">{{content}}</textarea>
         </div>
         <div class="col-md-4" id="chatbox">
            <div class="panel panel-primary">
@@ -40,15 +40,21 @@
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 
-    var socket = io.connect("http://localhost:3000");
+    var socket = io.connect("http://kuric:3000");
     var editor = CodeMirror.fromTextArea(document.getElementById("code-screen"), {
         lineNumbers: true,
         theme: "monokai"
     });
 
+    var code = $("#code-screen").val();
     var cmClient;
     function init(str, revision, clients, serverAdapter) {
-        editor.setValue(str);
+        if(code) {
+            editor.setValue(code);
+        } else {
+            editor.setValue(str);
+        }
+        
         cmClient = window.cmClient = new EditorClient(
             revision, clients, serverAdapter, new CodeMirrorAdapter(editor)
         );
