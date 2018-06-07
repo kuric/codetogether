@@ -50,7 +50,11 @@
     var cmClient;
     function init(str, revision, clients, serverAdapter) {
         if(code) {
-            editor.setValue(code);
+            editor.on("beforeChange", function() {
+                editor.setOption("readOnly", true);
+                editor.setValue(code); 
+            });
+            
         } else {
             editor.setValue(str);
         }
