@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/createTask', function(req, res){
-    var newTask = new Task({creator: req.user.id, usersToEdit: [req.user.id]});
+    var newTask = new Task({creator: req.user.id});
     newTask.save(function(err, data){
         if(err) {
             console.log(err);
