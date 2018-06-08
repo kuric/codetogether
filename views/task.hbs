@@ -96,5 +96,6 @@
 
     socket.on('chatMessage', function(data){
         $("#chatbox-listMessages").append(userMessage(data.username, data.message));
+        $(".panel-body.fixed-panel").scrollTop(9999);
     });
 </script>
