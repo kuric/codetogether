@@ -37,6 +37,7 @@
 <script src="/plugins/ot/ot.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    var access;
     var EditorClient = ot.EditorClient;
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
@@ -59,13 +60,19 @@
     var creator = $("#creator").val();
     var code = $("#code-screen").val();
     var cmClient;
+    
     function init(str, revision, clients, serverAdapter) {
         if(code) {
             editor.on("beforeChange", function() {
                 if(userName !== creator) {
-                    editor.setOption("readOnly", true);
+                   access = true;
+                } else {
+                    access = false;
                 }
-                editor.setValue(code); 
+                if(access === false) {
+                    editor.setOption("readOnly", true);
+                }                
+                 editor.setValue(code); 
             });
 
         } else {
