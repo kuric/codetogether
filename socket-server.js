@@ -33,6 +33,10 @@ module.exports = function(server) {
             io.to(socket.room).emit('chatMessage', data);
         });
 
+        socket.on('giveAccess', function(data){
+            io.to(socket.room).emit('giveAccess', data);
+        });
+
         socket.on('disconnect', function(data){
             socket.leave(socket.room);
         });

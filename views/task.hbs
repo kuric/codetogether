@@ -37,7 +37,8 @@
 <script src="/plugins/ot/ot.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var access;
+    var access = false;
+    var uAc;
     var EditorClient = ot.EditorClient;
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
@@ -57,24 +58,38 @@
             $("#chatbox-username").text(userName);
         }
     };
+
     var creator = $("#creator").val();
+    var uid = $("#uid").val();
+
+    if(uid === creator) {
+       $("body").append("<input type='hidden' class='access' value='" + creator + "'/>");
+    }
+
     var code = $("#code-screen").val();
     var cmClient;
+
     
     function init(str, revision, clients, serverAdapter) {
+        
         if(code) {
             editor.on("beforeChange", function() {
-                if(userName !== creator) {
-                   access = true;
-                } else {
-                    access = false;
+                if($(".access").length) {
+                    console.log(accessIds);
+                    var accessIds = $(".access").val();
+                    console.log(accessIds);
+                    console.log("index", accessIds.indexOf(uid));
+                    if(accessIds.indexOf(uid) >= 0) {
+                        access = true;
+                    }
                 }
                 if(access === false) {
                     editor.setOption("readOnly", true);
-                }                
-                 editor.setValue(code); 
+                } else {
+                     editor.setOption("readOnly", false);
+                }        
             });
-
+            editor.setValue(code);
         } else {
             editor.setValue(str);
         }
@@ -88,26 +103,52 @@
         init(obj.str, obj.revision, obj.clients, new SocketIOAdapter(socket));
     });
     
-    
-
     var roomId = $("#roomId").val(); 
     socket.emit("joinRoom", {room: roomId, username: userName});
-    var userMessage = function(name, text) {
+
+    var userMessage = function(name, text, uid) {
         return ('<li class="media"><div class="media-body"><div class="media">' +
             '<div class="media-body"/>' +
-            '<b>' + name + '</b> : '+ text +
+            '<b class="userName">' + name + '</b> : '+ text +
+            '<input type="hidden" value="'+ uid + '"/>' +
             '</hr> </div></div></div></li>'
         );
     };
 
+    var giveAccess = function(accessId) {
+        console.log("giveAccess+ acc:",accessId);
+        socket.emit('giveAccess', {uid: accessId});
+    }
+
     var sendMessage = function() {
         var userMessage = $('#userMessage').val();
-        socket.emit('chatMessage', {message: userMessage, username: userName});
+        var uid = $('#uid').val();
+        socket.emit('chatMessage', {message: userMessage, username: userName, uid:uid});
         $('#userMessage').val("");
     }
 
     socket.on('chatMessage', function(data){
-        $("#chatbox-listMessages").append(userMessage(data.username, data.message));
+        $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
         $(".panel-body.fixed-panel").scrollTop(9999);
+    });
+
+    socket.on('giveAccess', function(data){
+        var accessIds;
+        if($(".access").length) {
+            accessIds = $(".access").val();
+        } else {
+            accessIds = false;
+        }
+        if(accessIds === false || accessIds.indexOf(data.uid) < 0 ) {
+             $("body").append("<input type='hidden' class='access' value='"+ data.uid +"'/>");
+        }
+    });
+
+    $("body").on('click', 'b.userName',function(event) {
+       if(uid === creator) {
+            var accessId = $(this).siblings("input").val();
+            console.log(accessId);
+            giveAccess(accessId);
+       }
     });
 </script>
