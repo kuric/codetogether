@@ -2,8 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/createTask', function(req, res){
-    var newTask = new Task();
-
+    var newTask = new Task({creator: req.user.id});
     newTask.save(function(err, data){
         if(err) {
             console.log(err);
@@ -21,9 +20,8 @@ router.get('/task/:id', function(req, res){
                 console.log(err);
                 res.render('error');
             }
-
             if(data) {
-                res.render('task', {content: data.content, roomId: data.id});
+                res.render('task', {content: data.content, roomId: data.id, creator: data.creator});
             } else {
                 res.render('error');
             }

@@ -31,6 +31,7 @@
     </div>
 </div>
 <input type="hidden" value="{{roomId}}" id="roomId"/>
+<input type="hidden" value="{{creator}}" id="creator"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.min.js"></script>
 <script src="/plugins/ot/ot.js"></script>
@@ -46,12 +47,24 @@
         theme: "monokai"
     });
 
+    var userName = $("#chatbox-username").val();
+    if(userName === "") {
+        userName = $("#userName").text();
+        if(userName === "") {
+            var userId = Math.floor(Math.random() * 9999).toString();
+            userName = "User" + userId;
+            $("#chatbox-username").text(userName);
+        }
+    };
+    var creator = $("#creator").val();
     var code = $("#code-screen").val();
     var cmClient;
     function init(str, revision, clients, serverAdapter) {
         if(code) {
             editor.on("beforeChange", function() {
-                editor.setOption("readOnly", true);
+                if(userName !== creator) {
+                    editor.setOption("readOnly", true);
+                }
                 editor.setValue(code); 
             });
 
@@ -68,15 +81,7 @@
         init(obj.str, obj.revision, obj.clients, new SocketIOAdapter(socket));
     });
     
-    var userName = $("#chatbox-username").val();
-    if(userName === "") {
-        userName = $("#userName").text();
-        if(userName === "") {
-            var userId = Math.floor(Math.random() * 9999).toString();
-            userName = "User" + userId;
-            $("#chatbox-username").text(userName);
-        }
-    };
+    
 
     var roomId = $("#roomId").val(); 
     socket.emit("joinRoom", {room: roomId, username: userName});
