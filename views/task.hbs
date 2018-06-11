@@ -141,6 +141,18 @@
 
     socket.on('chatMessage', function (data) {
         $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
+         var accessed = checkAccess();
+        if (uid === creator || uid === data.uid)
+            {
+            $("b.userName").filter(function () {
+                if ($(this).text().trim() === data.username.trim() 
+                && $(this).text().trim().indexOf("📋") <0 
+                && (accessed.indexOf(data.uid) >= 0)) {
+                    var text = $(this).text().trim() + '📋';
+                    $(this).text(text);
+                }
+            });
+        }
         $(".panel-body.fixed-panel").scrollTop(9999);
     });
 
@@ -155,7 +167,7 @@
             }
             if (uid === creator || uid === data.uid) {
                 $("b.userName").filter(function () {
-                    if ($(this).text().trim() === data.uName) {
+                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") <0) {
                         var text = $(this).text().trim() + '📋';
                         $(this).text(text);
                     }
@@ -172,7 +184,7 @@
             $("input.access[value='" + data.uid + "']").remove();
             if (uid === creator || uid === data.uid) {
                 $("b.userName").filter(function () {
-                    if ($(this).text().trim() === data.uName) {
+                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") >=0) {
                         var text = $(this).text().trim().replace('📋',"");
                         $(this).text(text);
                     }
