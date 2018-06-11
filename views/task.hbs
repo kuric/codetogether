@@ -4,34 +4,32 @@
             <textarea id="code-screen">{{content}}</textarea>
         </div>
         <div class="col-md-4" id="chatbox">
-           <div class="panel panel-primary">
-               <div class="panel-heading">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
                     Chat room
                     <span class="pull-right" id="chatbox-username">
-                        {{#if user}}
-                            {{user.name}}
-                        {{/if}}
+                        {{#if user}} {{user.name}} {{/if}}
                     </span>
-               </div>
-               <div class="panel-body fixed-panel">
-                   <ul class="media-list" id="chatbox-listMessages">
+                </div>
+                <div class="panel-body fixed-panel">
+                    <ul class="media-list" id="chatbox-listMessages">
 
-                   </ul>
-               </div>
-               <div class="panel-footer">
-                   <div class="input-group">
-                       <input type="text" class="form-control" placeholder="Enter message" id="userMessage"/>
-                       <span class="input-group-btn">
-                           <button class="btn btn-primary" onclick="sendMessage()">Send</button>
-                       </span>
-                   </div>
-               </div>
-           </div>
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Enter message" id="userMessage" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<input type="hidden" value="{{roomId}}" id="roomId"/>
-<input type="hidden" value="{{creator}}" id="creator"/>
+<input type="hidden" value="{{roomId}}" id="roomId" />
+<input type="hidden" value="{{creator}}" id="creator" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.min.js"></script>
 <script src="/plugins/ot/ot.js"></script>
@@ -50,9 +48,9 @@
     });
 
     var userName = $("#chatbox-username").val();
-    if(userName === "") {
+    if (userName === "") {
         userName = $("#userName").text();
-        if(userName === "") {
+        if (userName === "") {
             var userId = Math.floor(Math.random() * 9999).toString();
             userName = "User" + userId;
             $("#chatbox-username").text(userName);
@@ -62,22 +60,22 @@
     var creator = $("#creator").val();
     var uid = $("#uid").val();
 
-    if(uid === creator) {
-       $("body").append("<input type='hidden' class='access' value='" + creator + "'/>");
+    if (uid === creator) {
+        $("body").append("<input type='hidden' class='access' value='" + creator + "'/>");
     }
 
     var code = $("#code-screen").val();
     var cmClient;
 
-    
+
     function init(str, revision, clients, serverAdapter) {
-        
-        if(code) {
-            editor.on("beforeChange", function() {
-                if($(".access").length) {
+
+        if (code) {
+            editor.on("beforeChange", function () {
+                if ($(".access").length) {
                     var accessed = checkAccess();
                     var uid = $("#uid").val();
-                    if(accessed.indexOf(uid) >= 0) {
+                    if (accessed.indexOf(uid) >= 0) {
                         access = true;
                     } else {
                         access = false;
@@ -85,106 +83,115 @@
                 } else {
                     access = false;
                 }
-                if(access === false) {
+                if (access === false) {
                     $(".accessed").remove();
                     editor.setOption("readOnly", true);
                 } else {
-                     editor.setOption("readOnly", false);
-                }        
+                    editor.setOption("readOnly", false);
+                }
             });
             editor.setValue(code);
         } else {
             editor.setValue(str);
         }
-        
+
         cmClient = window.cmClient = new EditorClient(
             revision, clients, serverAdapter, new CodeMirrorAdapter(editor)
         );
     };
 
-    socket.on('doc', function(obj){
+    socket.on('doc', function (obj) {
         init(obj.str, obj.revision, obj.clients, new SocketIOAdapter(socket));
     });
-    
-    var roomId = $("#roomId").val(); 
-    socket.emit("joinRoom", {room: roomId, username: userName});
 
-    var userMessage = function(name, text, uid) {
+    var roomId = $("#roomId").val();
+    socket.emit("joinRoom", { room: roomId, username: userName });
+
+    var userMessage = function (name, text, uid) {
         return ('<li class="media"><div class="media-body"><div class="media">' +
             '<div class="media-body"/>' +
-            '<b class="userName">' + name + '</b> : '+ text +
-            '<input type="hidden" value="'+ uid + '"/>' +
+            '<b class="userName">' + name + '</b> : ' + text +
+            '<input type="hidden" value="' + uid + '"/>' +
             '</hr> </div></div></div></li>'
         );
     };
-   
-    var giveAccess = function(accessId) {
-        socket.emit('giveAccess', {uid: accessId});
+
+    var giveAccess = function (accessId, accessName) {
+        socket.emit('giveAccess', { uid: accessId, uName: accessName });
     }
-    var deleteAccess = function(accessId) {
-        socket.emit('deleteAccess', {uid: accessId});
+    var deleteAccess = function (accessId, accessName) {
+        socket.emit('deleteAccess', { uid: accessId, uName: accessName  });
     }
-    var sendMessage = function() {
+    var sendMessage = function () {
         var userMessage = $('#userMessage').val();
         var uid = $('#uid').val();
-        socket.emit('chatMessage', {message: userMessage, username: userName, uid:uid});
+        socket.emit('chatMessage', { message: userMessage, username: userName, uid: uid });
         $('#userMessage').val("");
     }
-    var checkAccess = function(){
+    var checkAccess = function () {
         var accessIds = [];
-        
-        if($(".access").length) {
-            $(".access").each(function() {  
+
+        if ($(".access").length) {
+            $(".access").each(function () {
                 accessIds.push($(this).val());
             });
-        } 
+        }
         return accessIds;
     }
-    var userNames = function() {
-        var userNames = [];
-        if($("b.userName").length) {
-            $("b.userName").each(function() { 
-                userNames.push($(this).text().trim());
-            });
-        }
-        return userNames;
-    }
-     var accesedView = function() {
-        var accessed = checkAccess();
-        var userNames = userNames();
-    }
 
-    socket.on('chatMessage', function(data){
+    socket.on('chatMessage', function (data) {
         $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
         $(".panel-body.fixed-panel").scrollTop(9999);
     });
 
-    socket.on('giveAccess', function(data){
+    socket.on('giveAccess', function (data) {
         var accessed = checkAccess();
-        if(accessed === [] || accessed.indexOf(data.uid) < 0 ) {
-            $("body").append("<input type='hidden' class='access' value='"+ data.uid +"'/>");
+        if (accessed === [] || accessed.indexOf(data.uid) < 0) {
+            $("body").append("<input type='hidden' class='access' value='" + data.uid + "'/>");
             var uid = $("#uid").val();
-            if(uid === data.uid) {
-                $(".panel-heading").append("<span class='accessed'>- access is allowed!</span>");
+            if (uid === data.uid) {
+                if(!$(".accessed").length)
+                    $(".panel-heading").append("<span class='accessed'>- access is allowed!</span>");
+            }
+            if (uid === creator || uid === data.uid) {
+                $("b.userName").filter(function () {
+                    if ($(this).text().trim() === data.uName) {
+                        var text = $(this).text().trim() + '📋';
+                        $(this).text(text);
+                    }
+                });
             }
         }
     });
-    socket.on('deleteAccess', function(data){
+    socket.on('deleteAccess', function (data) {
         var accessed = checkAccess();
-        if(accessed.indexOf(data.uid) >= 0 ) {
-            $("input.access[value='"+ data.uid+"']").remove();
+        if (accessed.indexOf(data.uid) >= 0) {
+            if($(".accessed").length) {
+                $(".accessed").remove();
+            }
+            $("input.access[value='" + data.uid + "']").remove();
+            if (uid === creator || uid === data.uid) {
+                $("b.userName").filter(function () {
+                    if ($(this).text().trim() === data.uName) {
+                        var text = $(this).text().trim().replace('📋',"");
+                        $(this).text(text);
+                    }
+                });
+            }
         }
+        
     });
 
-    $("body").on('click', 'b.userName',function(event) {
-       if(uid === creator) {
+    $("body").on('click', 'b.userName', function (event) {
+        if (uid === creator) {
             var accessId = $(this).siblings("input").val();
+            var accessName = $(this).text().trim();
             var accessed = checkAccess();
-            if(accessed.indexOf(accessId) >= 0) {
-                deleteAccess(accessId);
+            if (accessed.indexOf(accessId) >= 0) {
+                deleteAccess(accessId, accessName);
             } else {
-                giveAccess(accessId);
+                giveAccess(accessId, accessName);
             }
-       }
+        }
     });
 </script>
