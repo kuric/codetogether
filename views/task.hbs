@@ -117,7 +117,7 @@
             '</hr> </div></div></div></li>'
         );
     };
-
+   
     var giveAccess = function(accessId) {
         socket.emit('giveAccess', {uid: accessId});
     }
@@ -134,14 +134,26 @@
         var accessIds = [];
         
         if($(".access").length) {
-            $(".access").each(function() {
+            $(".access").each(function() {  
                 accessIds.push($(this).val());
             });
-        } else {
-            accessIds = [];
-        }
+        } 
         return accessIds;
     }
+    var userNames = function() {
+        var userNames = [];
+        if($("b.userName").length) {
+            $("b.userName").each(function() { 
+                userNames.push($(this).text().trim());
+            });
+        }
+        return userNames;
+    }
+     var accesedView = function() {
+        var accessed = checkAccess();
+        var userNames = userNames();
+    }
+
     socket.on('chatMessage', function(data){
         $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
         $(".panel-body.fixed-panel").scrollTop(9999);
@@ -160,8 +172,7 @@
     socket.on('deleteAccess', function(data){
         var accessed = checkAccess();
         if(accessed.indexOf(data.uid) >= 0 ) {
-            $("body input[value='"+ data.uid+"']").remove();
-            var uid = $("#uid").val();
+            $("input.access[value='"+ data.uid+"']").remove();
         }
     });
 
