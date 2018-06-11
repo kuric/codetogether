@@ -36,6 +36,9 @@ module.exports = function(server) {
         socket.on('giveAccess', function(data){
             io.to(socket.room).emit('giveAccess', data);
         });
+        socket.on('deleteAccess', function(data){
+            io.to(socket.room).emit('deleteAccess', data);
+        });
 
         socket.on('disconnect', function(data){
             socket.leave(socket.room);

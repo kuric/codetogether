@@ -75,15 +75,18 @@
         if(code) {
             editor.on("beforeChange", function() {
                 if($(".access").length) {
-                    console.log(accessIds);
-                    var accessIds = $(".access").val();
-                    console.log(accessIds);
-                    console.log("index", accessIds.indexOf(uid));
-                    if(accessIds.indexOf(uid) >= 0) {
+                    var accessed = checkAccess();
+                    var uid = $("#uid").val();
+                    if(accessed.indexOf(uid) >= 0) {
                         access = true;
+                    } else {
+                        access = false;
                     }
+                } else {
+                    access = false;
                 }
                 if(access === false) {
+                    $(".accessed").remove();
                     editor.setOption("readOnly", true);
                 } else {
                      editor.setOption("readOnly", false);
@@ -116,39 +119,61 @@
     };
 
     var giveAccess = function(accessId) {
-        console.log("giveAccess+ acc:",accessId);
         socket.emit('giveAccess', {uid: accessId});
     }
-
+    var deleteAccess = function(accessId) {
+        socket.emit('deleteAccess', {uid: accessId});
+    }
     var sendMessage = function() {
         var userMessage = $('#userMessage').val();
         var uid = $('#uid').val();
         socket.emit('chatMessage', {message: userMessage, username: userName, uid:uid});
         $('#userMessage').val("");
     }
-
+    var checkAccess = function(){
+        var accessIds = [];
+        
+        if($(".access").length) {
+            $(".access").each(function() {
+                accessIds.push($(this).val());
+            });
+        } else {
+            accessIds = [];
+        }
+        return accessIds;
+    }
     socket.on('chatMessage', function(data){
         $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
         $(".panel-body.fixed-panel").scrollTop(9999);
     });
 
     socket.on('giveAccess', function(data){
-        var accessIds;
-        if($(".access").length) {
-            accessIds = $(".access").val();
-        } else {
-            accessIds = false;
+        var accessed = checkAccess();
+        if(accessed === [] || accessed.indexOf(data.uid) < 0 ) {
+            $("body").append("<input type='hidden' class='access' value='"+ data.uid +"'/>");
+            var uid = $("#uid").val();
+            if(uid === data.uid) {
+                $(".panel-heading").append("<span class='accessed'>- access is allowed!</span>");
+            }
         }
-        if(accessIds === false || accessIds.indexOf(data.uid) < 0 ) {
-             $("body").append("<input type='hidden' class='access' value='"+ data.uid +"'/>");
+    });
+    socket.on('deleteAccess', function(data){
+        var accessed = checkAccess();
+        if(accessed.indexOf(data.uid) >= 0 ) {
+            $("body input[value='"+ data.uid+"']").remove();
+            var uid = $("#uid").val();
         }
     });
 
     $("body").on('click', 'b.userName',function(event) {
        if(uid === creator) {
             var accessId = $(this).siblings("input").val();
-            console.log(accessId);
-            giveAccess(accessId);
+            var accessed = checkAccess();
+            if(accessed.indexOf(accessId) >= 0) {
+                deleteAccess(accessId);
+            } else {
+                giveAccess(accessId);
+            }
        }
     });
 </script>
