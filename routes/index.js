@@ -3,6 +3,7 @@ var router = express.Router();
 var nodemailer = require('nodemailer');
 var config = require('../config');
 var transporter = nodemailer.createTransport(config.mailer);
+var request = require('request');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -18,6 +19,31 @@ router.route('/contact')
     res.render('contact', { title: 'Code4Share' });
   })
   .post(function(req, res, next) {
+  
+  if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+    // return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+    res.render('contact', {
+      title: 'ShareCode',
+      name: req.body.name,
+      email: req.body.email,
+      message: req.body.message,
+      error: "Please select captcha"
+    });
+  }
+  var secretKey = "6Ld6kV4UAAAAAC_1rJoscS61v8z3BIUocexwRVrv";
+  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+  request(verificationUrl,function(error,response,body) {
+    body = JSON.parse(body);
+    // Success will be true or false depending upon captcha validation.
+    if(body.success !== undefined && !body.success) {
+      res.render('contact', {
+        title: 'ShareCode',
+        name: req.body.name,
+        email: req.body.email,
+        message: req.body.message,
+        error: "Please select captcha"
+      });
+    }
     req.checkBody('name','Empty Name').notEmpty();
     req.checkBody('email','Invalid Email').isEmail();
     req.checkBody('message','Empty Message').notEmpty();
@@ -47,6 +73,8 @@ router.route('/contact')
       });
      
     }
+  });
+    
   });
 
  

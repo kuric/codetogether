@@ -1,5 +1,6 @@
 <h1 class="text-center">Contact us</h1>
 <form class="col-md-6 col-md-offset-3" method="post">
+
     {{#each errorMessages}}
         <div class="alert alert-danger">
             {{this.msg}}
@@ -20,4 +21,6 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
+    <div>{{error}}</div>
+    <div class="g-recaptcha" data-sitekey="6Ld6kV4UAAAAANcszUhtonP4EZYAESW2LwN8oTNn"></div>
 </form>
