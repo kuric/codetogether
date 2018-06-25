@@ -1,0 +1,18 @@
+<div class="container">
+    <h2>Your tasks!</h2>
+    <ul class="taskList">
+   {{#each this}}
+   {{#if _id}}
+    <li>
+        <a href="/task/{{_id}}">{{_id}}</a>
+        {{#if content}}
+            <span class="content__title">Code:</span>
+            <span class="content__text">{{content}}</span>
+        {{else}}
+            <span>Nothing to view</span>
+        {{/if}}
+    </li>
+    {{/if}}
+   {{/each}}
+   </ul>
+</div>

@@ -12,7 +12,7 @@ router.route('/login')
   }), function (req, res) {
     if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
         res.render('login', {
-          title: 'ShareCode',
+          title: 'Code Together',
           email: req.body.email,
           password: req.body.password,
           error: "Please select captcha"
@@ -25,7 +25,7 @@ router.route('/login')
             // Success will be true or false depending upon captcha validation.
             if(body.success !== undefined && !body.success) {
               res.render('login', {
-                title: 'ShareCode',
+                title: 'Code Together',
                 email: req.body.email,
                 error: "Please select captcha"
               });

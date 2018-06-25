@@ -1,4 +1,4 @@
-<div>
+<div class="container">
     <div class="row editor">
         <div class="col-md-8">
             <textarea id="code-screen">{{content}}</textarea>
@@ -41,6 +41,7 @@
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 
+    {{!-- var socket = io.connect("http://kuric:3000"); --}}
     var socket = io.connect("https://codetogether.herokuapp.com/");
     var editor = CodeMirror.fromTextArea(document.getElementById("code-screen"), {
         lineNumbers: true,

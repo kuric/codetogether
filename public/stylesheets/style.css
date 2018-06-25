@@ -31,6 +31,21 @@ a {
   font-size: 1.2em;
   padding: 0.25em;
 }
+
+.taskList {
+  list-style-type: none;
+}
+.taskList li {
+  padding: 0.5em 0 ;
+}
+.content__title {
+  font: 1em sans-serif;
+  display: inline-block;
+  padding: 0 0.25em;
+}
+.content__text {
+  font: 1em sans-serif;
+}
 footer {
   color: white;
   text-align: center;

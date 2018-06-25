@@ -77,5 +77,8 @@ router.route('/contact')
     
   });
 
+  // router.route('/cabinet').get(function (req, res, next) {
+  //   res.render('cabinet', { title: 'Code Together' });
+  // });
  
 module.exports = router;
