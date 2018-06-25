@@ -7,16 +7,16 @@ var request = require('request');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Code4Share' });
+  res.render('index', { title: 'Code Together' });
 });
 
 router.get('/about', function(req, res, next) {
-  res.render('about', { title: 'Code4Share' });
+  res.render('about', { title: 'Code Together' });
 });
 
 router.route('/contact')
   .get(function(req, res, next) {
-    res.render('contact', { title: 'Code4Share' });
+    res.render('contact', { title: 'Code Together' });
   })
   .post(function(req, res, next) {
   
