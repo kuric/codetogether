@@ -37,7 +37,7 @@ router.route('/contact')
     // Success will be true or false depending upon captcha validation.
     if(body.success !== undefined && !body.success) {
       res.render('contact', {
-        title: 'ShareCode',
+        title: 'Code Together',
         name: req.body.name,
         email: req.body.email,
         message: req.body.message,
@@ -51,7 +51,7 @@ router.route('/contact')
 
     if(errors) {
       res.render('contact', {
-        title: 'Code4Share',
+        title: 'Code Together',
         name: req.body.name,
         email: req.body.email,
         message: req.body.message,
@@ -59,7 +59,7 @@ router.route('/contact')
       });
     } else {
       var mailOptions = {
-        from: 'test code4Share',
+        from: 'Code Together',
         to: 'gallskiy@gmail.com',
         subject: 'You got new message 🐥 from visitor: ' + req.body.name + ', email: ' + req.body.email,
         text: req.body.message
@@ -69,7 +69,7 @@ router.route('/contact')
         if(error) {
           return console.log(error);
         }
-        return res.render('thank', { title: 'Code4Share' });
+        return res.render('thank', { title: 'Code Together' });
       });
      
     }
