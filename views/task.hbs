@@ -1,7 +1,22 @@
 <div class="container">
     <div class="row editor">
-        <div class="col-md-8">
-            <textarea id="code-screen">{{content}}</textarea>
+        <div class="col-md-8 selection">
+            <textarea id="code-screen">{{content}}
+            
+            
+            </textarea>
+            <div class="modeSelector">
+            <select id="mode">
+                <option>js</option>
+                <option>css</option>
+                <option>php</option>
+                <option>c</option>
+                <option>c++</option>
+                <option>java</option>
+                <option>xml</option>
+                <option>html</option>
+            </select>
+            </div>
         </div>
         <div class="col-md-4" id="chatbox">
             <div class="panel panel-primary">
@@ -28,10 +43,19 @@
         </div>
     </div>
 </div>
+
+
 <input type="hidden" value="{{roomId}}" id="roomId" />
 <input type="hidden" value="{{creator}}" id="creator" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/addon/mode/loadmode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/meta.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.0/mode/php/php.min.js"></script>
 <script src="/plugins/ot/ot.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -40,14 +64,15 @@
     var EditorClient = ot.EditorClient;
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
-
+    var language = "javascript";
     {{!-- var socket = io.connect("http://kuric:3000"); --}}
+
     var socket = io.connect("https://codetogether.herokuapp.com/");
     var editor = CodeMirror.fromTextArea(document.getElementById("code-screen"), {
         lineNumbers: true,
-        theme: "monokai"
+        theme: "monokai",
+        mode: language
     });
-
     var userName = $("#chatbox-username").val();
     if (userName === "") {
         userName = $("#userName").text();
@@ -67,6 +92,25 @@
 
     var code = $("#code-screen").val();
     var cmClient;
+    $("#mode").change(function(){
+        change(this.value);
+    });
+    function change(value) {
+        var mode, spec;
+        var info = CodeMirror.findModeByExtension(value);
+        if (info) {
+                mode = info.mode;
+                spec = info.mime;
+            }
+        if (mode) {
+            editor.setOption("mode", spec);
+            CodeMirror.autoLoadMode(editor, mode);
+            document.getElementById("code-screen").textContent = spec;
+        } else {
+            alert("Could not find a mode corresponding to " + value);
+        }
+        return null;
+    }
 
 
     function init(str, revision, clients, serverAdapter) {
@@ -121,7 +165,7 @@
         socket.emit('giveAccess', { uid: accessId, uName: accessName });
     }
     var deleteAccess = function (accessId, accessName) {
-        socket.emit('deleteAccess', { uid: accessId, uName: accessName  });
+        socket.emit('deleteAccess', { uid: accessId, uName: accessName });
     }
     var sendMessage = function () {
         var userMessage = $('#userMessage').val();
@@ -142,13 +186,12 @@
 
     socket.on('chatMessage', function (data) {
         $("#chatbox-listMessages").append(userMessage(data.username, data.message, data.uid));
-         var accessed = checkAccess();
-        if (uid === creator || uid === data.uid)
-            {
+        var accessed = checkAccess();
+        if (uid === creator || uid === data.uid) {
             $("b.userName").filter(function () {
-                if ($(this).text().trim() === data.username.trim() 
-                && $(this).text().trim().indexOf("📋") <0 
-                && (accessed.indexOf(data.uid) >= 0)) {
+                if ($(this).text().trim() === data.username.trim()
+                    && $(this).text().trim().indexOf("📋") < 0
+                    && (accessed.indexOf(data.uid) >= 0)) {
                     var text = $(this).text().trim() + '📋';
                     $(this).text(text);
                 }
@@ -163,12 +206,12 @@
             $("body").append("<input type='hidden' class='access' value='" + data.uid + "'/>");
             var uid = $("#uid").val();
             if (uid === data.uid) {
-                if(!$(".accessed").length)
+                if (!$(".accessed").length)
                     $(".panel-heading").append("<span class='accessed'>- access is allowed!</span>");
             }
             if (uid === creator || uid === data.uid) {
                 $("b.userName").filter(function () {
-                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") <0) {
+                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") < 0) {
                         var text = $(this).text().trim() + '📋';
                         $(this).text(text);
                     }
@@ -179,20 +222,20 @@
     socket.on('deleteAccess', function (data) {
         var accessed = checkAccess();
         if (accessed.indexOf(data.uid) >= 0) {
-            if($(".accessed").length) {
+            if ($(".accessed").length) {
                 $(".accessed").remove();
             }
             $("input.access[value='" + data.uid + "']").remove();
             if (uid === creator || uid === data.uid) {
                 $("b.userName").filter(function () {
-                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") >=0) {
-                        var text = $(this).text().trim().replace('📋',"");
+                    if ($(this).text().trim() === data.uName && $(this).text().trim().indexOf("📋") >= 0) {
+                        var text = $(this).text().trim().replace('📋', "");
                         $(this).text(text);
                     }
                 });
             }
         }
-        
+
     });
 
     $("body").on('click', 'b.userName', function (event) {

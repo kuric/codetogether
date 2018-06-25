@@ -14,6 +14,16 @@ a {
 .editor {
   padding: 1em;
 }
+.selection {
+  position: relative;
+}
+.modeSelector {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 15px;
+  z-index: 1000;
+}
 .fixed-panel {
   min-height: 50px;
   max-height: 205px;
