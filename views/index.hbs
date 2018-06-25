@@ -1,7 +1,17 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
-
-
+<div class="container">
+    <h1>{{title}}</h1>
+<h2 class="center">Welcome to {{title}}</h2>
 {{#if user}}
     <a href="/createTask" class="btn btn-primary">Create New Task<a/> 
-{{/if}}
+{{else}}
+    <div>
+        <p class="center">You can code together with friend!</p>
+        <img class="img-responsive center" src="/images/editor.png" alt="editor">
+    </div>
+    <div>
+        <p class="center">During coding you can chat with friends!</p>
+        <img class="img-responsive center" src="/images/chat.png" alt="chat">
+    </div>
+{{/if}} 
+</div>
+

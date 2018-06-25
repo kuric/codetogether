@@ -23,3 +23,18 @@ a {
   text-transform: capitalize;
   color: #27da27;
 }
+.center {
+  text-align: center;
+  margin: auto;
+}
+.list li {
+  font-size: 1.2em;
+  padding: 0.25em;
+}
+footer {
+  color: white;
+  text-align: center;
+}
+footer p {
+  padding: 1em;
+}

@@ -41,7 +41,7 @@
     var SocketIOAdapter = ot.SocketIOAdapter;
     var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 
-    var socket = io.connect("http://kuric:3000");
+    var socket = io.connect("https://codetogether.herokuapp.com/");
     var editor = CodeMirror.fromTextArea(document.getElementById("code-screen"), {
         lineNumbers: true,
         theme: "monokai"

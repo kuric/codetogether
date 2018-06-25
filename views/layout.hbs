@@ -31,8 +31,11 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
+            {{#if user}}
+            <li><a href="/cabinet">Cabinet</a></li>
+            {{/if}}
             <li><a href="/contact">Contact</a></li>
+            <li><a href="/about">About</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {{#if user}}
@@ -55,6 +58,11 @@
     </nav>
     <input type="hidden" id="uid" value="{{user.id}}" />
     {{{body}}}
+   
+        <footer class="navbar navbar-inverse navbar-fixed-bottom">
+          <p>Made by Oleksandr Andrieiev</p>
+        </footer >
+      
     <script src='https://www.google.com/recaptcha/api.js'></script>
   </body>
 </html>
