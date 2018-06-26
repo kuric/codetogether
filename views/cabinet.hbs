@@ -30,7 +30,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io.connect("http://kuric:3000");
-
+     {{!-- var socket = io.connect("https://codetogether.herokuapp.com/"); --}}
     $("body").on('click', '.delete', function (event) {
         var taskId = $(this).siblings('a').text();
         socket.emit('deleteTask', { taskId: taskId });

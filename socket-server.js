@@ -33,17 +33,17 @@ module.exports = function(server) {
             io.to(socket.room).emit('chatMessage', data);
         });
 
-        // socket.on('deleteTask', function(data){
-        //     Task.deleteOne({ _id: data.taskId }, function (err) {
-        //         var taskId = data.taskId;
-        //         if(err){
-        //             io.emit('deleteTask', err);
-        //         }
-        //         else {
-        //             io.emit('deleteTask', {"acknowledged":"true", "taskId": taskId});
-        //         }
-        //     });
-        // });
+        socket.on('deleteTask', function(data){
+            Task.deleteOne({ _id: data.taskId }, function (err) {
+                var taskId = data.taskId;
+                if(err){
+                    io.emit('deleteTask', err);
+                }
+                else {
+                    io.emit('deleteTask', {"acknowledged":"true", "taskId": taskId});
+                }
+            });
+        });
 
         socket.on('giveAccess', function(data){
             io.to(socket.room).emit('giveAccess', data);
