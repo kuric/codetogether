@@ -48,6 +48,10 @@ a {
 .taskList li {
   padding: 0.5em 0 ;
 }
+p.center {
+  font-size: 1em;
+  padding: 0.25em;
+}
 .content__title {
   font: 1em sans-serif;
   display: inline-block;

@@ -111,7 +111,25 @@
         }
         return null;
     }
-
+    function changed() {
+        if ($(".access").length) {
+            var accessed = checkAccess();
+            var uid = $("#uid").val();
+            if (accessed.indexOf(uid) >= 0) {
+                access = true;
+            } else {
+                access = false;
+            }
+        } else {
+            access = false;
+        }
+        if (access === false) {
+            $(".accessed").remove();
+            editor.setOption("readOnly", true);
+        } else {
+            editor.setOption("readOnly", false);
+        }
+    }
 
     function init(str, revision, clients, serverAdapter) {
 
@@ -217,6 +235,7 @@
                     }
                 });
             }
+            changed();
         }
     });
     socket.on('deleteAccess', function (data) {
@@ -232,6 +251,7 @@
                         var text = $(this).text().trim().replace('📋', "");
                         $(this).text(text);
                     }
+                    changed();
                 });
             }
         }
