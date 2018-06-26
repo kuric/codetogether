@@ -95,6 +95,7 @@
     $("#mode").change(function(){
         change(this.value);
     });
+
     function change(value) {
         var mode, spec;
         var info = CodeMirror.findModeByExtension(value);
@@ -111,7 +112,8 @@
         }
         return null;
     }
-    function changed() {
+
+    function setMode() {
         if ($(".access").length) {
             var accessed = checkAccess();
             var uid = $("#uid").val();
@@ -132,7 +134,6 @@
     }
 
     function init(str, revision, clients, serverAdapter) {
-
         if (code) {
             editor.on("beforeChange", function () {
                 if ($(".access").length) {
@@ -154,8 +155,10 @@
                 }
             });
             editor.setValue(code);
+            setMode();
         } else {
             editor.setValue(str);
+            setMode();
         }
 
         cmClient = window.cmClient = new EditorClient(
@@ -235,7 +238,6 @@
                     }
                 });
             }
-            changed();
         }
     });
     socket.on('deleteAccess', function (data) {
@@ -251,7 +253,6 @@
                         var text = $(this).text().trim().replace('📋', "");
                         $(this).text(text);
                     }
-                    changed();
                 });
             }
         }

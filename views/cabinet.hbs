@@ -1,18 +1,46 @@
 <div class="container">
     <h2>Your tasks!</h2>
     <ul class="taskList">
-   {{#each this}}
-   {{#if _id}}
-    <li>
-        <a href="/task/{{_id}}">{{_id}}</a>
-        {{#if content}}
-            <span class="content__title">Code:</span>
-            <span class="content__text">{{content}}</span>
-        {{else}}
-            <span>Nothing to view</span>
-        {{/if}}
-    </li>
-    {{/if}}
-   {{/each}}
-   </ul>
+        <li>
+            <span>Task Id</span>
+            <span>Content</span>
+            <span>Delete</span>
+        </li>
+        {{#each this}} 
+            {{#if name}} 
+                {{else}}
+                    {{#if _id}}
+                        <li>
+                            <a href="/task/{{_id}}">{{_id}}</a>
+                            
+                            {{#if content}}
+                            <span class="content__title">Code:</span>
+                            <span class="content__text">{{content}}</span>
+                            {{else}}
+                            <span>Nothing to view</span>
+                            {{/if}}
+                            <span class="glyphicon glyphicon-minus delete"></span>
+                        </li>
+                    {{/if}} 
+            {{/if}} 
+        {{/each}}
+
+    </ul>
 </div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect("http://kuric:3000");
+
+    $("body").on('click', '.delete', function (event) {
+        var taskId = $(this).siblings('a').text();
+        socket.emit('deleteTask', { taskId: taskId });
+    });
+
+    socket.on('deleteTask', function (data) {
+        if (data.acknowledged) {
+            $("a[href='/task/" + data.taskId + "']").parent("li").remove();
+        } else {
+            alert("Something wrong! :(");
+        }
+    });
+</script>

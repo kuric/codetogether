@@ -44,12 +44,21 @@ a {
 
 .taskList {
   list-style-type: none;
+  padding: 0.5em;
+  border: 1px solid grey;
+  border-radius: 4px;
 }
 .taskList li {
   padding: 0.5em 0 ;
+  display: flex;
+  justify-content: space-around;
+}
+.taskList li:first-of-type {
+  border-bottom: 1px solid grey;
 }
 p.center {
-  font-size: 1em;
+  font-size: 1.5em;
+  font-weight: bold;
   padding: 0.25em;
 }
 .content__title {
@@ -60,6 +69,10 @@ p.center {
 .content__text {
   font: 1em sans-serif;
 }
+.delete {
+  cursor: pointer;
+}
+
 footer {
   color: white;
   text-align: center;
