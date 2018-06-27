@@ -1,31 +1,38 @@
 <div class="container">
     <h2>Your tasks!</h2>
-    <ul class="taskList">
-        <li>
-            <span>Task Id</span>
-            <span>Content</span>
-            <span>Delete</span>
-        </li>
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>Task Id</th>
+            <th>Content</th>
+            <th>Delete</th>
+        </thead>
+        <tbody>
         {{#each this}} 
             {{#if name}} 
                 {{else}}
                     {{#if _id}}
-                        <li>
+                    <tr>
+                        <td>
                             <a href="/task/{{_id}}">{{_id}}</a>
-                            
+                        </td>
                             {{#if content}}
-                            <span class="content__title">Code:</span>
+                        <td>  
                             <span class="content__text">{{content}}</span>
+                        </td>
                             {{else}}
-                            <span>Nothing to view</span>
+                            <span>Nothing to view</span></td>
                             {{/if}}
+                        <td>
                             <span class="glyphicon glyphicon-minus delete"></span>
-                        </li>
+                        </td>
+                    </tr>
                     {{/if}} 
             {{/if}} 
         {{/each}}
-
-    </ul>
+        </tbody>
+    </table>
+    </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
