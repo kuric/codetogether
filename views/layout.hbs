@@ -114,8 +114,10 @@ function set_style_from_cookie()
   if (css_title.length) {
     if(css_title === "sun") {
        $(".icon-moon").attr('style','display: none !important');
+       $(".icon-sun").attr('style','display: block !important')
     } else {
        $(".icon-sun").attr('style','display: none !important');
+       $(".icon-moon").attr('style','display: block !important')
     }
     switch_style( css_title );
   }
