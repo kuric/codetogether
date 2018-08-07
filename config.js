@@ -5,8 +5,8 @@ module.exports = {
     mailer: {
         service: 'Gmail',
         auth: {
-            user: 'js.portfolio.demo@gmail.com',
-            pass: 'K12rnu7op'
+            user: 'youremail',
+            pass: 'yourpass'
         }
     },
     dbConnstring: url,
